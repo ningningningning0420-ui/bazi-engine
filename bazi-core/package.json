@@ -1,0 +1,20 @@
+{
+  "name": "bazi-core",
+  "version": "0.1.0",
+  "description": "确定性八字盘引擎核心（环境无关纯 TS）",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lunar-typescript": "^1.7.8",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}
