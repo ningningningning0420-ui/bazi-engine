@@ -55,3 +55,16 @@ export type {
   EventKind, EventCoeff, RollResult,
 } from './types';
 export type { CrossKind, CrossRelation } from './forecast/field-relations';
+
+// ===== 计划 6：L2 性格地基 + ports + generic-adapter（通用先行·v1 闭合）=====
+export { extractCitableStructures } from './persona/structures';
+export { buildScripturePrompt } from './persona/prompt';
+export { validatePersonaAnchors, CITE_MIN_N } from './persona/validate';
+export { PersonaAnchorsSchema, MINGLI_FORBIDDEN, 主导驱力池, 对人基调池, 命门池 } from './persona/anchors';
+export { ensurePersona, buildRuntimeContext, rollEvent, MAX_RETRY } from './adapters/generic';
+export type { PersonaPorts } from './adapters/generic';
+export type { SeedPort, ClockPort, PersistencePort, LlmInvokePort, PersistedNpc } from './ports';
+export type {
+  主导驱力, 对人基调, 命门, PersonaAnchors, CitableStructures,
+  ValidationViolation, ValidationResult, ScripturePrompt,
+} from './types';
