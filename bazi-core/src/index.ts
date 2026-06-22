@@ -18,3 +18,12 @@ export type {
   RelationKind, RelationHit,
   ChartAnalysis, ChartFacts,
 } from './types';
+
+// ===== 计划 3：L1-B 用神真相源链 =====
+export { climateNeed } from './facts/climate';
+export { buildEmergentTopology } from './facts/topology';
+export { analyzeFavor } from './facts/favor';
+export type {
+  Pentad, FlowLevel, ClimateTag, MoistTag, ClimateResult,
+  ClashPair, TongGuanNode, EmergentTopology, FavorResult,
+} from './types';

@@ -18,14 +18,24 @@ describe('analyzeChart / computeChartFacts', () => {
     expect(computeChartFacts(SAMPLE)).toEqual(computeChartFacts(SAMPLE));
   });
 
-  test('analyzeChart 接收 Chart 产出三件套', () => {
+  test('analyzeChart 产出 计划2三件套 + 计划3三件套(共6字段)', () => {
     const a = analyzeChart(computeChart(SAMPLE));
-    expect(Object.keys(a).sort()).toEqual(['刑冲合害', '旺衰', '通根'].sort());
+    expect(Object.keys(a).sort()).toEqual(['刑冲合害', '调候', '旺衰', '涌现拓扑', '用神', '通根'].sort());
   });
 
   test('hourUnknown：通根只三柱、旺衰仍可算', () => {
     const f = computeChartFacts({ ...SAMPLE, hour: null, hourUnknown: true });
     expect(f.分析.通根).toHaveLength(3);
     expect(f.分析.旺衰.月令旺衰).toBeDefined();
+  });
+
+  test('计划3：分析 含 调候/涌现拓扑/用神，favorSign 恰一个+2', () => {
+    const f = computeChartFacts(SAMPLE);
+    expect(f.分析.调候.级别 === null || ['critical', 'adjust'].includes(f.分析.调候.级别!)).toBe(true);
+    expect(f.分析.涌现拓扑.flowLevel).toMatch(/畅|通|滞|阻/);
+    const fs = f.分析.用神.favorSign;
+    const plus2 = (['木', '火', '土', '金', '水'] as const).filter((w) => fs[w] === 2);
+    expect(plus2).toHaveLength(1);
+    expect(f.分析.用神.主用神).toBeDefined();
   });
 });

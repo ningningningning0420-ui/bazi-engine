@@ -135,7 +135,10 @@ export interface ChartAnalysis {
   通根: StemRoots[];
   旺衰: StrengthAnalysis;
   刑冲合害: RelationHit[];
-  // 计划 3 装配任务(Task 5)将追加：调候 / 涌现拓扑 / 用神
+  // 计划 3：
+  调候: ClimateResult;
+  涌现拓扑: EmergentTopology;
+  用神: FavorResult;
   // 计划 4 将追加：十神组合 / 矛盾张力轴 / 格局 / 从格信号
 }
 export interface ChartFacts extends Chart {
