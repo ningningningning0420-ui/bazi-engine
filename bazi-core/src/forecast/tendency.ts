@@ -1,4 +1,4 @@
-import { sheng, ke, shengMe, keMe, type WuXing } from '../constants/gan-zhi';
+import { GAN_WUXING, sheng, ke, shengMe, keMe, type WuXing } from '../constants/gan-zhi';
 import { computeChartFacts } from '../analyze-chart';
 import { selectLuckPillars } from './luck-pillars';
 import { perturbField } from './field';
@@ -44,16 +44,18 @@ export function deriveTendency(chart: Chart, atDate: AtDate, grain: GrainSet): T
   const luck = selectLuckPillars(chart, atDate, grain);
   const field = perturbField(facts, luck);
 
-  const 大运吉凶倾向: LuckTrend = luck.大运 == null ? '未起运'
-    : favorSign[luck.大运.zhiWuXing] > 0 ? '用神运'
-    : favorSign[luck.大运.zhiWuXing] < 0 ? '忌神运' : '中性';
+  // 大运以天干为先导（计划 line606）：用大运天干五行的 favorSign 定吉凶倾向
+  const 大运W = luck.大运 ? GAN_WUXING[luck.大运.gan] : null;
+  const 大运吉凶倾向: LuckTrend = 大运W == null ? '未起运'
+    : favorSign[大运W] > 0 ? '用神运' : favorSign[大运W] < 0 ? '忌神运' : '中性';
 
   const 动荡冲 = field.作用.some((a) => a.类型 === '刑冲');
   const 域倾向: DomainTendency[] = DOMAIN_ORDER.map((域) => {
     const focus = domainFocus(域, dmW, chart.birthInput.gender);
     const net = focus.reduce((a, w) => a + field.Δfield[w] * favorSign[w], 0);
-    const 动荡 = (域 === '关系情感' || 域 === '健康' || 域 === '心性波动' || 域 === '名声口舌') && 动荡冲;
-    const 方向: Direction = 动荡 ? '动荡' : net > DIR_EPS ? '↑' : net < -DIR_EPS ? '↓' : '平';
+    const 软域 = 域 === '关系情感' || 域 === '健康' || 域 === '心性波动' || 域 === '名声口舌';
+    // 方向以 net(favorSign内积)为主；仅当 net 落'平'带且软域有刑冲时升格'动荡'(不washout强方向)
+    const 方向: Direction = net > DIR_EPS ? '↑' : net < -DIR_EPS ? '↓' : (软域 && 动荡冲 ? '动荡' : '平');
     return {
       域, 方向, 强度: intensityOf(Math.abs(net)), net: round2(net),
       依据: `${域}关注五行[${focus.join('')}]·net=${round2(net)}(Δfield×favorSign)`,
