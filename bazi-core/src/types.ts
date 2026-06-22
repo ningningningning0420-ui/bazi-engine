@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { Gan, Zhi, WuXing, YinYang, HiddenRole } from './constants/gan-zhi';
+export type { Gan, Zhi, WuXing, YinYang, HiddenRole }; // 类型枢纽:转出 gan-zhi 基础类型
 
 export const TEN_GODS = [
   '比肩','劫财','食神','伤官','偏财','正财','七杀','正官','偏印','正印',
