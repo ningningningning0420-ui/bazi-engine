@@ -39,3 +39,19 @@ export type {
   GeName, LiGeBasis, PatternResult, CongSignal,
   TensionAxis, SameSourcePoint, TensionResult,
 } from './types';
+
+// ===== 计划 5：L3 流年推手 + L4 成功率系数（可选层·需 atDate·不进 computeChartFacts）=====
+export { selectGrain } from './forecast/grain';
+export { selectLuckPillars } from './forecast/luck-pillars';
+export { crossRelations } from './forecast/field-relations';
+export { perturbField } from './forecast/field';
+export { deriveTendency } from './forecast/tendency';
+export { eventModifier } from './forecast/event';
+export { rollWithCoeff } from './forecast/roll';
+export type {
+  AtDate, Grain, GrainSet, LuckPillars,
+  Intensity, ActionKind, FieldAction, RawFlags, FieldResult,
+  DomainKind, Direction, DomainTendency, LuckTrend, Tendency,
+  EventKind, EventCoeff, RollResult,
+} from './types';
+export type { CrossKind, CrossRelation } from './forecast/field-relations';
