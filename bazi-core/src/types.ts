@@ -50,3 +50,50 @@ export interface Chart {
   };
   caveats: string[];
 }
+
+// ===== 计划 2：L1-A 结构事实层类型 =====
+
+export type FourPillars = Chart['四柱'];
+export const SLOT_ORDER: readonly PillarSlot[] = ['年', '月', '日', '时'];
+
+export type RootType = '本气根' | '中气根' | '余气根';
+export interface RootHit { slot: PillarSlot; branch: Zhi; rootType: RootType; }
+export interface StemRoots {
+  slot: PillarSlot;
+  stem: Gan;
+  wuXing: WuXing;
+  roots: RootHit[];
+  hasRoot: boolean;
+}
+
+export type WangShuai = '旺' | '相' | '休' | '囚' | '死';
+export interface StrengthAnalysis {
+  月令旺衰: WangShuai;
+  得令: boolean;
+  得地: { hasRoot: boolean; positions: PillarSlot[] };
+  得势: { 印比数: number };
+  五行得分: Record<WuXing, number>;
+  同党: number;   // 日主五行 + 印五行 的得分和
+  异党: number;   // 其余三五行 的得分和
+  强弱比: number; // 同党 / (同党 + 异党)
+  身强弱: '身强' | '身弱' | '均衡';
+  borderline: boolean;
+}
+
+export type RelationKind = '天干五合' | '六合' | '三合' | '三会' | '六冲' | '三刑' | '自刑' | '六害';
+export interface RelationHit {
+  类型: RelationKind;
+  members: { slot: PillarSlot; value: Gan | Zhi }[];
+  化五行: WuXing | null;  // 合化类才有，其余 null
+  贴邻: boolean;          // 涉及柱位是否占据连续槽位
+}
+
+export interface ChartAnalysis {
+  通根: StemRoots[];
+  旺衰: StrengthAnalysis;
+  刑冲合害: RelationHit[];
+  // 计划 3 将扩充：涌现拓扑 / 十神成立组合 / 矛盾张力轴 / 格局 / 调候 / 用神
+}
+export interface ChartFacts extends Chart {
+  分析: ChartAnalysis;
+}
