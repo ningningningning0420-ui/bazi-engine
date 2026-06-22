@@ -55,6 +55,12 @@ describe('generic-adapter', () => {
     expect(ctx).not.toMatch(MINGLI_FORBIDDEN);
     expect(ctx).toMatch(/护栏|命理|内部依据/);
   });
+  test('★出口执法：即便 persona 含命理标签(绕过validate)·台前输出仍命理-free', () => {
+    const tainted = { ...goodAnchors(), 行为倾向标签: ['食伤旺', '谨慎'] };
+    const ctx = buildRuntimeContext(tainted);
+    expect(ctx).not.toMatch(MINGLI_FORBIDDEN);   // 含命理词的整行被剔除
+    expect(ctx).toMatch(/主导驱力/);             // 干净行保留
+  });
   test('rollEvent = eventModifier→rollWithCoeff(prng外置·确定性)', () => {
     const chart = computeChart(BI);
     const at: AtDate = { year: 2025, month: 6, day: 15 };

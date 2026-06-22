@@ -1,7 +1,7 @@
 import { computeChartFacts } from '../analyze-chart';
 import { buildScripturePrompt } from '../persona/prompt';
 import { validatePersonaAnchors } from '../persona/validate';
-import { PersonaAnchorsSchema } from '../persona/anchors';
+import { PersonaAnchorsSchema, MINGLI_FORBIDDEN } from '../persona/anchors';
 import { eventModifier } from '../forecast/event';
 import { rollWithCoeff } from '../forecast/roll';
 import type { BirthInput, PersonaAnchors, Tendency, AtDate, EventKind, RollResult, Chart } from '../types';
@@ -53,14 +53,15 @@ export async function ensurePersona(npcId: string, birthInput: BirthInput, ports
 
 /** ★台前寄存器注入：命理-free 行为画像 + tendency 隐藏暗示 + 护栏（供宿主注入实时上下文）。 */
 export function buildRuntimeContext(persona: PersonaAnchors, tendency?: Pick<Tendency, '隐藏暗示'>): string {
-  return [
-    RUNTIME_GUARD,
+  const lines = [
     `主导驱力：${persona.主导驱力}`,
     `对人基调：${persona.对人基调}`,
     `命门：${persona.命门}`,
     persona.行为倾向标签.length ? `行为倾向：${persona.行为倾向标签.join('、')}` : '',
     tendency?.隐藏暗示 ? `当下：${tendency.隐藏暗示}` : '',
-  ].filter(Boolean).join('\n');
+    // ★台前纯净唯一出口执法：剔除任何含命理词的行（防上游回归把命理泄漏进台前正文·红线②）
+  ].filter((l) => l && !MINGLI_FORBIDDEN.test(l));
+  return [RUNTIME_GUARD, ...lines].join('\n');
 }
 
 /** generic 掷骰路径（大奥等有裁决引擎的消费方不调此函数·只读 EventCoeff）。 */
