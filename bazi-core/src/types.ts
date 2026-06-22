@@ -88,11 +88,54 @@ export interface RelationHit {
   贴邻: boolean;          // 涉及柱位是否占据连续槽位
 }
 
+// ===== 计划 3：L1-B 用神真相源链类型 =====
+
+export type Pentad = -2 | -1 | 0 | 1 | 2;
+export type FlowLevel = '畅' | '通' | '滞' | '阻';
+export type ClimateTag = '寒甚' | '偏寒' | '平' | '偏暖' | '暖甚';
+export type MoistTag = '燥甚' | '偏燥' | '平' | '偏湿' | '湿甚';
+
+export interface ClimateResult {
+  季节: '春' | '夏' | '秋' | '冬' | '土月';
+  寒暖标签: ClimateTag;
+  燥湿标签: MoistTag;
+  温度指数: number;
+  湿度指数: number;
+  调候提示: WuXing[];
+  急迫度: number;
+  级别: 'critical' | 'adjust' | null;
+}
+
+export interface ClashPair {
+  pair: [WuXing, WuXing]; 克: WuXing; 受: WuXing; scores: [number, number];
+  tongGuanShen: WuXing; tongGuanPresent: boolean; tongGuanScore: number; intensity: number; detail: string;
+}
+export interface TongGuanNode {
+  forClash: [WuXing, WuXing]; node: WuXing; present: boolean; score: number;
+  relevant: boolean; status: '调和中' | '缺位待补' | '无关'; detail: string;
+}
+export interface EmergentTopology {
+  flow: number; flowLevel: FlowLevel; coverage: number; chainStrength: number;
+  breaks: { at: WuXing; type: '无泄' | '无源'; detail: string }[];
+  isFullCycle: boolean; cyclePresent: WuXing[]; longestChain: { path: WuXing[]; len: number };
+  clashes: ClashPair[]; tongGuanReport: TongGuanNode[];
+  dominant: { wuXing: WuXing; score: number; share: number; multipleOfMean: number; detail: string }[];
+  missing: { wuXing: WuXing; score: number; 类别: TenGodCategory; detail: string }[];
+  presentRows: WuXing[]; caveats: string[];
+}
+export interface FavorResult {
+  流派: '扶抑为主+调候补'; 主用神: WuXing; 来源: '调候' | '通关' | '扶抑' | '均衡兜底';
+  喜: WuXing[]; 忌: WuXing[]; 用神十神: TenGodCategory[]; favorSign: Record<WuXing, Pentad>;
+  调候: { 需: WuXing | null; 级别: 'critical' | 'adjust' | null };
+  通关: { 需: WuXing[]; 战对: { 克: WuXing; 受: WuXing; 通关神: WuXing }[] };
+}
+
 export interface ChartAnalysis {
   通根: StemRoots[];
   旺衰: StrengthAnalysis;
   刑冲合害: RelationHit[];
-  // 计划 3 将扩充：涌现拓扑 / 十神成立组合 / 矛盾张力轴 / 格局 / 调候 / 用神
+  // 计划 3 装配任务(Task 5)将追加：调候 / 涌现拓扑 / 用神
+  // 计划 4 将追加：十神组合 / 矛盾张力轴 / 格局 / 从格信号
 }
 export interface ChartFacts extends Chart {
   分析: ChartAnalysis;
