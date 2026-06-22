@@ -192,3 +192,39 @@ export interface TensionAxis {
 }
 export interface SameSourcePoint { 结构cite: string; 同一来源: string; 正面表述: string; 负面表述: string; }
 export interface TensionResult { 矛盾张力轴: TensionAxis[]; 优缺同源点: SameSourcePoint[]; }
+
+// ===== 计划 5：L3 流年推手 + L4 成功率系数类型 =====
+
+export interface AtDate { year: number; month: number; day: number; }   // 剧情日期·plain·非 Date
+export type Grain = '大运' | '流年' | '流月' | '流日';
+export type GrainSet = Grain[];
+export interface LuckPillars { 大运: Pillar | null; 流年: Pillar; 流月: Pillar | null; 流日: Pillar | null; caveats: string[]; }
+
+export type Intensity = '微' | '中' | '显';
+export type ActionKind = '生扶' | '克泄' | '引动用神' | '引动忌神' | '刑冲' | '合化';
+export interface FieldAction { 类型: ActionKind; 对象: string; 强度: Intensity; }
+export interface RawFlags { 反吟: boolean; 伏吟: boolean; 岁运并临: boolean; }
+export interface FieldResult { Δfield: Record<WuXing, number>; 净吉凶: number; 作用: FieldAction[]; rawFlags: RawFlags; }
+
+export type DomainKind = '事业权位' | '财' | '关系情感' | '健康' | '心性波动' | '名声口舌';
+export type Direction = '↑' | '↓' | '动荡' | '平';
+export interface DomainTendency { 域: DomainKind; 方向: Direction; 强度: Intensity; net: number; 依据: string; }
+export type LuckTrend = '用神运' | '忌神运' | '中性' | '未起运';
+export interface Tendency {
+  当运干支: { 大运: string | null; 流年: string; 流月: string | null; 流日: string | null };
+  大运吉凶倾向: LuckTrend;
+  作用: FieldAction[];
+  域倾向: DomainTendency[];
+  Δfield_blend: Record<WuXing, number>;
+  净吉凶: number;
+  隐藏暗示: string;              // ★命理-free 行为语言·禁词测试
+  rawFlags: RawFlags;
+  caveats: string[];
+}
+
+export type EventKind = '事业晋升' | '求财' | '婚恋' | '健康' | '诉讼口舌' | '学业考试';
+export interface EventCoeff {
+  successDelta: number; severityScale: number; directionBias: '↑' | '↓' | '中';
+  rationale: { focus: TenGodCategory[]; aptitude: number; timing: number; amp: number; 主导amp: string | null };
+}
+export interface RollResult { success: boolean; roll: number; threshold: number; }
