@@ -40,3 +40,9 @@ const KE: Record<WuXing, WuXing> = { 木:'土', 土:'水', 水:'火', 火:'金',
 
 export const sheng = (w: WuXing): WuXing => SHENG[w];
 export const ke = (w: WuXing): WuXing => KE[w];
+
+export const WU_XING: readonly WuXing[] = ['木', '火', '土', '金', '水'];
+
+// 生我者（印）：木生火→火的印是木；火生土→土的印是火……
+const GENERATES_ME: Record<WuXing, WuXing> = { 火:'木', 土:'火', 金:'土', 水:'金', 木:'水' };
+export const shengMe = (w: WuXing): WuXing => GENERATES_ME[w];
