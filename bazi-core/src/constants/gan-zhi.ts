@@ -46,3 +46,7 @@ export const WU_XING: readonly WuXing[] = ['木', '火', '土', '金', '水'];
 // 生我者（印）：木生火→火的印是木；火生土→土的印是火……
 const GENERATES_ME: Record<WuXing, WuXing> = { 火:'木', 土:'火', 金:'土', 水:'金', 木:'水' };
 export const shengMe = (w: WuXing): WuXing => GENERATES_ME[w];
+
+// 克我者（官杀）：金克木→木的克我者是金……（与 KE 互逆：ke(keMe(w))===w）
+const KE_ME: Record<WuXing, WuXing> = { 土:'木', 水:'土', 火:'水', 金:'火', 木:'金' };
+export const keMe = (w: WuXing): WuXing => KE_ME[w];

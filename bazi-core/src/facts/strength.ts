@@ -1,13 +1,7 @@
 import { GAN_WUXING, ZHI_WUXING, HIDDEN_STEMS, WU_XING, sheng, ke, shengMe, type WuXing } from '../constants/gan-zhi';
+import { STEM_WEIGHT, HIDDEN_WEIGHT, MONTH_BRANCH_MULT, STRONG_CUT, WEAK_CUT } from '../constants/weights';
 import { SLOT_ORDER, type FourPillars, type DayMaster, type StrengthAnalysis, type WangShuai, type TenGodCategory, type PillarSlot } from '../types';
 import { analyzeRoots } from './roots';
-
-// 量化权重（v1 可调常量；不追求算命准，只求内部自洽）
-const STEM_WEIGHT = 1.0;
-const HIDDEN_WEIGHT: Record<'本气' | '中气' | '余气', number> = { 本气: 1.0, 中气: 0.6, 余气: 0.3 };
-const MONTH_BRANCH_MULT = 3.0;   // 月支藏干当令加权
-const STRONG_CUT = 0.55;
-const WEAK_CUT = 0.45;
 
 /** 日主五行在月令五行下的旺相休囚死。 */
 export function wangShuai(dmW: WuXing, monthW: WuXing): WangShuai {
