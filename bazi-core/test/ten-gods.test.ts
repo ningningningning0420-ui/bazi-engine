@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { tenGod, category } from '../src/ten-gods';
+import { tenGod, category, categoryOf } from '../src/ten-gods';
 
 describe('十神推导（日主=甲）', () => {
   const cases: [string, string][] = [
@@ -22,5 +22,22 @@ describe('十神归类', () => {
   test('食神/伤官 → 食伤；正印/偏印 → 印', () => {
     expect(category('伤官')).toBe('食伤');
     expect(category('偏印')).toBe('印');
+  });
+});
+
+describe('categoryOf 五行→日主十神类别', () => {
+  test('甲(木)日主：木比劫/水印/火食伤/土财/金官杀', () => {
+    expect(categoryOf('木', '木')).toBe('比劫');
+    expect(categoryOf('水', '木')).toBe('印');
+    expect(categoryOf('火', '木')).toBe('食伤');
+    expect(categoryOf('土', '木')).toBe('财');
+    expect(categoryOf('金', '木')).toBe('官杀');
+  });
+  test('戊(土)日主：土比劫/火印/金食伤/水财/木官杀', () => {
+    expect(categoryOf('土', '土')).toBe('比劫');
+    expect(categoryOf('火', '土')).toBe('印');
+    expect(categoryOf('金', '土')).toBe('食伤');
+    expect(categoryOf('水', '土')).toBe('财');
+    expect(categoryOf('木', '土')).toBe('官杀');
   });
 });

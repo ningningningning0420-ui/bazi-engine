@@ -1,5 +1,6 @@
 import { WU_XING, ZHI_WUXING, sheng, ke, shengMe, type WuXing, type Zhi } from '../constants/gan-zhi';
-import type { RelationHit, EmergentTopology, ClashPair, TongGuanNode, FlowLevel, TenGodCategory } from '../types';
+import { categoryOf } from '../ten-gods';
+import type { RelationHit, EmergentTopology, ClashPair, TongGuanNode, FlowLevel } from '../types';
 
 const PRESENT_SHARE = 0.05;
 const ABSENT_ABS = 0.30;
@@ -15,14 +16,6 @@ const ANNOTATE_RELATION_CROSS = true;
 
 const clamp01 = (x: number): number => Math.max(0, Math.min(1, x));
 const round2 = (x: number): number => Math.round(x * 100) / 100;
-
-function categoryOf(w: WuXing, dmW: WuXing): TenGodCategory {
-  if (w === dmW) return '比劫';
-  if (w === shengMe(dmW)) return '印';
-  if (w === sheng(dmW)) return '食伤';
-  if (w === ke(dmW)) return '财';
-  return '官杀'; // keMe(dmW)
-}
 
 export function buildEmergentTopology(
   S: Record<WuXing, number>,

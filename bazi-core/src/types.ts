@@ -144,3 +144,47 @@ export interface ChartAnalysis {
 export interface ChartFacts extends Chart {
   分析: ChartAnalysis;
 }
+
+// ===== 计划 4：L1-B 锚点结构类型 =====
+
+export type GodComboKind =
+  | '伤官见官' | '伤官配印' | '食神制杀' | '财滋弱杀' | '财多身弱' | '印重身旺'
+  | '杀重无制' | '杀印相生' | '食伤生财' | '比劫夺财' | '官印相生' | '伤官生财';
+export type ComboPolarity = '吉向' | '凶向' | '中性';
+export interface ComboMember { 十神: TenGod | TenGodCategory; force: number; transparency: number; }
+export interface ComboHit {
+  类型: GodComboKind;
+  成立程度: number;                  // round2 输出值
+  极性: ComboPolarity;
+  内含矛盾: boolean;                 // ∈{伤官见官,财多身弱,杀重无制,印重身旺}
+  members: ComboMember[];
+  力量快照: Record<string, number>;  // 全精度：核心十神 force + '制化系数' + '原始成立度'
+  说明键: string;                    // 命理-结构串，无性格词
+}
+
+export type GeName =
+  | '建禄格' | '羊刃格' | '月劫格'
+  | '食神格' | '伤官格' | '正财格' | '偏财格' | '正官格' | '七杀格' | '正印格' | '偏印格';
+export type LiGeBasis = '建禄' | '羊刃' | '月劫' | '本气透干' | '杂气透干' | '月令本气暗藏未透';
+export interface PatternResult {
+  格: GeName; 立格依据: LiGeBasis; 透干: boolean;
+  月令本气十神: TenGod; 备选格: GeName[]; 说明: string;
+}
+
+export interface CongSignal {
+  候选: '从强' | '从弱' | null;
+  强度: number;                      // round2；候选 null → 0
+  触发项: string[];
+  反例: string[];
+}
+
+export interface TensionAxis {
+  轴名: string;
+  来源类型: '相战' | '内含矛盾' | '元张力';
+  来源cite: string;
+  两极: [string, string];
+  张力强度: number;                  // round2 输出值
+  优缺同源: boolean;
+}
+export interface SameSourcePoint { 结构cite: string; 同一来源: string; 正面表述: string; 负面表述: string; }
+export interface TensionResult { 矛盾张力轴: TensionAxis[]; 优缺同源点: SameSourcePoint[]; }

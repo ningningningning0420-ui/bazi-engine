@@ -1,4 +1,4 @@
-import { GAN_WUXING, GAN_YINYANG, sheng, ke, type Gan } from './constants/gan-zhi';
+import { GAN_WUXING, GAN_YINYANG, sheng, ke, shengMe, type Gan, type WuXing } from './constants/gan-zhi';
 import type { TenGod, TenGodCategory } from './types';
 
 /** 以日主 dm 为参照，求另一天干 t 的十神。 */
@@ -20,3 +20,12 @@ const CATEGORY: Record<TenGod, TenGodCategory> = {
   偏印: '印', 正印: '印',
 };
 export const category = (g: TenGod): TenGodCategory => CATEGORY[g];
+
+/** 五行 w 相对日主五行 dmW 的十神类别（topology/favor/tension 单一来源）。 */
+export function categoryOf(w: WuXing, dmW: WuXing): TenGodCategory {
+  if (w === dmW) return '比劫';
+  if (w === shengMe(dmW)) return '印';
+  if (w === sheng(dmW)) return '食伤';
+  if (w === ke(dmW)) return '财';
+  return '官杀'; // keMe(dmW)
+}

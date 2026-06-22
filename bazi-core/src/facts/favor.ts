@@ -1,7 +1,8 @@
 import { WU_XING, sheng, ke, shengMe, keMe, type WuXing } from '../constants/gan-zhi';
+import { categoryOf } from '../ten-gods';
 import type {
   FourPillars, DayMaster, StrengthAnalysis, RelationHit,
-  EmergentTopology, ClimateResult, FavorResult, Pentad, TenGodCategory,
+  EmergentTopology, ClimateResult, FavorResult, Pentad,
 } from '../types';
 
 const WUXING_TIE_ORDER: readonly WuXing[] = ['木', '火', '土', '金', '水'];
@@ -38,9 +39,6 @@ export function analyzeFavor(
   const guanshaW = keMe(dmW);     // 官杀
   const same: WuXing[] = [yinW, bijieW];
   const drain: WuXing[] = [shishangW, caiW, guanshaW];
-
-  const catOf = (w: WuXing): TenGodCategory =>
-    w === dmW ? '比劫' : w === yinW ? '印' : w === shishangW ? '食伤' : w === caiW ? '财' : '官杀';
 
   // §1 扶抑层（基线喜忌 + 扶抑主用神候选）
   const 喜 = new Set<WuXing>();
@@ -115,7 +113,7 @@ export function analyzeFavor(
     流派: '扶抑为主+调候补',
     主用神, 来源,
     喜: 喜Out, 忌: 忌Out,
-    用神十神: [catOf(主用神)],
+    用神十神: [categoryOf(主用神, dmW)],
     favorSign,
     调候: { 需: tiaohou.需, 级别: tiaohou.级别 },
     通关: { 需: tongguanNeeds, 战对: 战对.map((c) => ({ 克: c.克, 受: c.受, 通关神: c.tongGuanShen })) },
