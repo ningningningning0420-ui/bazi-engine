@@ -27,3 +27,15 @@ export type {
   Pentad, FlowLevel, ClimateTag, MoistTag, ClimateResult,
   ClashPair, TongGuanNode, EmergentTopology, FavorResult,
 } from './types';
+
+// ===== 计划 4：L1-B 锚点结构 =====
+export { detectGodCombos } from './facts/combos';
+export { buildTension } from './facts/tension';
+export { buildPattern } from './facts/pattern';
+export { buildCongSignal } from './facts/cong';
+export { categoryOf } from './ten-gods';
+export type {
+  GodComboKind, ComboPolarity, ComboMember, ComboHit,
+  GeName, LiGeBasis, PatternResult, CongSignal,
+  TensionAxis, SameSourcePoint, TensionResult,
+} from './types';

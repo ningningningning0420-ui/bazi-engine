@@ -18,9 +18,11 @@ describe('analyzeChart / computeChartFacts', () => {
     expect(computeChartFacts(SAMPLE)).toEqual(computeChartFacts(SAMPLE));
   });
 
-  test('analyzeChart 产出 计划2三件套 + 计划3三件套(共6字段)', () => {
+  test('analyzeChart 产出 计划2/3/4 共10字段', () => {
     const a = analyzeChart(computeChart(SAMPLE));
-    expect(Object.keys(a).sort()).toEqual(['刑冲合害', '调候', '旺衰', '涌现拓扑', '用神', '通根'].sort());
+    expect(Object.keys(a).sort()).toEqual(
+      ['刑冲合害', '调候', '旺衰', '涌现拓扑', '用神', '通根', '十神组合', '矛盾张力', '格局', '从格信号'].sort(),
+    );
   });
 
   test('hourUnknown：通根只三柱、旺衰仍可算', () => {
@@ -37,5 +39,23 @@ describe('analyzeChart / computeChartFacts', () => {
     const plus2 = (['木', '火', '土', '金', '水'] as const).filter((w) => fs[w] === 2);
     expect(plus2).toHaveLength(1);
     expect(f.分析.用神.主用神).toBeDefined();
+  });
+
+  test('计划4：分析 含 十神组合/矛盾张力/格局/从格信号', () => {
+    const f = computeChartFacts({ year: 1990, month: 3, day: 15, hour: 10, hourUnknown: false, gender: '乾' });
+    expect(Array.isArray(f.分析.十神组合)).toBe(true);
+    for (const c of f.分析.十神组合) {
+      expect(c.成立程度).toBeGreaterThanOrEqual(0.1);
+      expect(c.成立程度).toBeLessThanOrEqual(1);
+      expect(['吉向', '凶向', '中性']).toContain(c.极性);
+    }
+    expect(f.分析.矛盾张力.矛盾张力轴).toBeDefined();
+    expect(f.分析.格局.格).toBeDefined();
+    expect(['从强', '从弱', null]).toContain(f.分析.从格信号.候选);
+  });
+
+  test('计划4：确定性——同生辰两次 computeChartFacts 分析深相等', () => {
+    const i = { year: 1985, month: 8, day: 20, hour: 14, hourUnknown: false, gender: '坤' } as const;
+    expect(computeChartFacts(i).分析).toEqual(computeChartFacts(i).分析);
   });
 });

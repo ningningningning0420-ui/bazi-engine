@@ -139,7 +139,11 @@ export interface ChartAnalysis {
   调候: ClimateResult;
   涌现拓扑: EmergentTopology;
   用神: FavorResult;
-  // 计划 4 将追加：十神组合 / 矛盾张力轴 / 格局 / 从格信号
+  // 计划 4：
+  十神组合: ComboHit[];
+  矛盾张力: TensionResult;
+  格局: PatternResult;
+  从格信号: CongSignal;
 }
 export interface ChartFacts extends Chart {
   分析: ChartAnalysis;
