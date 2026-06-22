@@ -228,3 +228,28 @@ export interface EventCoeff {
   rationale: { focus: TenGodCategory[]; aptitude: number; timing: number; amp: number; 主导amp: string | null };
 }
 export interface RollResult { success: boolean; roll: number; threshold: number; }
+
+// ===== 计划 6：L2 性格地基类型 =====
+
+export const 主导驱力池 = ['求成就', '求安稳', '求自由', '求认同', '求掌控', '求联结', '求超越'] as const;
+export const 对人基调池 = ['亲和', '疏离', '支配', '顺从', '戒备', '坦荡'] as const;
+export const 命门池 = ['偏执', '优柔', '孤傲', '依赖', '急躁', '自抑'] as const;
+export type 主导驱力 = (typeof 主导驱力池)[number];
+export type 对人基调 = (typeof 对人基调池)[number];
+export type 命门 = (typeof 命门池)[number];
+
+export interface PersonaAnchors {
+  主导驱力: 主导驱力; 对人基调: 对人基调; 命门: 命门;
+  行为倾向标签: string[];
+  滋养向: WuXing[];
+  citedStructures: string[];
+  优缺同源锚: { 优点cite: string; 弱点cite: string };
+}
+export interface CitableStructures { all: string[]; 优缺同源点: string[]; 张力轴: string[]; }
+export interface ValidationViolation { check: string; reason: string; }
+export interface ValidationResult { ok: boolean; violations: ValidationViolation[]; degraded: boolean; }
+export interface ScripturePrompt {
+  命局结构: string; 可cite白名单: string[]; 优缺同源候选: string[];
+  写作任务: string; 双寄存器指令: string; cite要求: string; 一盘多解: string;
+  硬护栏: string; priorViolations: string[];
+}
