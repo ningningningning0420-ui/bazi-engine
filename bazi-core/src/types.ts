@@ -144,6 +144,8 @@ export interface ChartAnalysis {
   矛盾张力: TensionResult;
   格局: PatternResult;
   从格信号: CongSignal;
+  // 计划 7：
+  神煞: ShenshaResult;
 }
 export interface ChartFacts extends Chart {
   分析: ChartAnalysis;
@@ -252,4 +254,32 @@ export interface ScripturePrompt {
   命局结构: string; 可cite白名单: string[]; 优缺同源候选: string[];
   写作任务: string; 双寄存器指令: string; cite要求: string; 一盘多解: string;
   硬护栏: string; priorViolations: string[];
+}
+
+// ===== 计划 7：本命神煞 =====
+export type ShenshaCategory = '贵人' | '情欲' | '驿动' | '权势' | '孤克' | '玄学' | '刑煞' | '特殊';
+export type ShenshaPolarity = '吉' | '凶' | '中';
+export type ShenshaBasis = '日干' | '年支' | '月支' | '日柱' | '纳音' | '年支性别';
+
+export type ShenshaName =
+  | '天乙贵人' | '文昌贵人' | '国印贵人' | '福星贵人' | '太极贵人'
+  | '天德贵人' | '月德贵人' | '天德合' | '月德合'
+  | '桃花' | '驿马' | '华盖' | '将星' | '红艳' | '红鸾' | '天喜'
+  | '羊刃' | '飞刃' | '禄神' | '金舆' | '暗禄'
+  | '魁罡' | '阴差阳错' | '十恶大败' | '金神' | '六秀日'
+  | '孤辰' | '寡宿' | '劫煞' | '灾煞' | '亡神'
+  | '天医' | '流霞' | '元辰' | '天罗' | '地网' | '学堂' | '词馆';
+
+export interface ShenshaHit {
+  name: ShenshaName;
+  category: ShenshaCategory;
+  polarity: ShenshaPolarity;     // 传统倾向标记(供 LLM 参考·非吉凶计算·不进 favorSign)
+  basis: ShenshaBasis;
+  positions: PillarSlot[];        // 命中落在哪几柱(可多柱;日柱类=['日'])
+  gist: string;                   // 一句机械含义(描述·非性格断言)
+}
+
+export interface ShenshaResult {
+  hits: ShenshaHit[];             // 命中的神煞(present 才在;天然稀疏)
+  caveats: string[];              // 计算警告(如缺时柱/缺性别 → 某神煞未算)
 }
