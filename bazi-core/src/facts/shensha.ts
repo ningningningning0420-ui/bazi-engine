@@ -92,7 +92,32 @@ function byStem(four: FourPillars, dm: DayMaster): ShenshaHit[] {
   return hits;
 }
 
+function byYearBranch(four: FourPillars): ShenshaHit[] {
+  const yz = four.年?.zhi;
+  if (!yz) return [];
+  const hits: ShenshaHit[] = [];
+  const pushBranch = (name: ShenshaName, target: Zhi) => {
+    const pos = branchesAt(four, [target]);
+    if (pos.length) hits.push(mk(name, '年支', pos));
+  };
+  const row = T.三合局类[yz];
+  pushBranch('桃花', row.桃花);
+  pushBranch('驿马', row.驿马);
+  pushBranch('华盖', row.华盖);
+  pushBranch('将星', row.将星);
+  const jzw = T.劫灾亡[yz];
+  pushBranch('劫煞', jzw.劫煞);
+  pushBranch('灾煞', jzw.灾煞);
+  pushBranch('亡神', jzw.亡神);
+  pushBranch('红鸾', T.红鸾[yz]);
+  pushBranch('天喜', T.天喜[yz]);
+  const gg = T.孤辰寡宿[yz];
+  pushBranch('孤辰', gg.孤辰);
+  pushBranch('寡宿', gg.寡宿);
+  return hits;
+}
+
 export function detectShensha(four: FourPillars, dm: DayMaster): ShenshaResult {
-  const hits = [...byStem(four, dm)];
+  const hits = [...byStem(four, dm), ...byYearBranch(four)];
   return { hits, caveats: [] };
 }

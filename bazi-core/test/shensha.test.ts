@@ -81,3 +81,25 @@ describe('detectShensha · byStem', () => {
     expect(detectShensha(fourGapyin(), DM_甲)).toEqual(detectShensha(fourGapyin(), DM_甲));
   });
 });
+
+describe('detectShensha · byYearBranch', () => {
+  // 年支 寅(火局):桃花卯·驿马申·华盖戌·将星午;劫煞亥·灾煞子·亡神巳
+  function fourYin寅(): FourPillars {
+    return {
+      年: buildPillar('甲', '甲', '寅'),
+      月: buildPillar('丁', '丁', '卯'),  // 桃花卯
+      日: buildPillar('甲', '甲', '申'),  // 驿马申
+      时: buildPillar('甲', '甲', '戌'),  // 华盖戌
+    };
+  }
+  test('年支寅:桃花卯(月)·驿马申(日)·华盖戌(时)', () => {
+    const r = detectShensha(fourYin寅(), DM_甲);
+    expect(r.hits.find((h) => h.name === '桃花')!.positions).toEqual(['月']);
+    expect(r.hits.find((h) => h.name === '驿马')!.positions).toEqual(['日']);
+    expect(r.hits.find((h) => h.name === '华盖')!.positions).toEqual(['时']);
+  });
+  test('年支寅:亡神在巳→无巳则不命中', () => {
+    const r = detectShensha(fourYin寅(), DM_甲);
+    expect(r.hits.find((h) => h.name === '亡神')).toBeUndefined();
+  });
+});
