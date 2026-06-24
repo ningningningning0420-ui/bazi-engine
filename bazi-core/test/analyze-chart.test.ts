@@ -18,10 +18,10 @@ describe('analyzeChart / computeChartFacts', () => {
     expect(computeChartFacts(SAMPLE)).toEqual(computeChartFacts(SAMPLE));
   });
 
-  test('analyzeChart 产出 计划2/3/4 共10字段', () => {
+  test('analyzeChart 产出 计划2/3/4 + 神煞 共11字段', () => {
     const a = analyzeChart(computeChart(SAMPLE));
     expect(Object.keys(a).sort()).toEqual(
-      ['刑冲合害', '调候', '旺衰', '涌现拓扑', '用神', '通根', '十神组合', '矛盾张力', '格局', '从格信号'].sort(),
+      ['刑冲合害', '调候', '旺衰', '涌现拓扑', '用神', '通根', '十神组合', '矛盾张力', '格局', '从格信号', '神煞'].sort(),
     );
   });
 

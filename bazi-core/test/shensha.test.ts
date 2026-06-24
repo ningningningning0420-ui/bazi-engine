@@ -7,6 +7,8 @@ import {
 } from '../src/constants/shensha-tables';
 import { detectShensha } from '../src/facts/shensha';
 import { buildPillar } from '../src/build-pillar';
+import { computeChartFacts } from '../src/analyze-chart';
+import { BirthInputSchema } from '../src/types';
 import type { FourPillars, DayMaster } from '../src/types';
 
 describe('shensha-tables 起例表自洽 + 必写死断言', () => {
@@ -160,5 +162,14 @@ describe('detectShensha · special 元辰', () => {
     const r = detectShensha(four年子(), DM_甲);
     expect(r.hits.find((h) => h.name === '元辰')).toBeUndefined();
     expect(r.caveats.some((c) => c.includes('元辰'))).toBe(true);
+  });
+});
+
+describe('神煞装配进 ChartAnalysis', () => {
+  test('computeChartFacts 输出含 分析.神煞.hits', () => {
+    const birth = BirthInputSchema.parse({ year: 1990, month: 5, day: 20, hour: 10, hourUnknown: false, gender: '乾' });
+    const facts = computeChartFacts(birth);
+    expect(facts.分析.神煞).toBeDefined();
+    expect(Array.isArray(facts.分析.神煞.hits)).toBe(true);
   });
 });

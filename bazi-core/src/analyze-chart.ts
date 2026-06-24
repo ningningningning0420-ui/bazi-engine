@@ -9,6 +9,7 @@ import { detectGodCombos } from './facts/combos';
 import { buildTension } from './facts/tension';
 import { buildPattern } from './facts/pattern';
 import { buildCongSignal } from './facts/cong';
+import { detectShensha } from './facts/shensha';
 import type { BirthInput, Chart, ChartAnalysis, ChartFacts } from './types';
 
 /**
@@ -20,6 +21,7 @@ export function analyzeChart(chart: Chart): ChartAnalysis {
   const 通根 = analyzeRoots(chart.四柱, chart.日主);
   const 旺衰 = analyzeStrength(chart.四柱, chart.日主, chart.十神类别);
   const 刑冲合害 = detectRelations(chart.四柱);
+  const 神煞 = detectShensha(chart.四柱, chart.日主);  // 无性别→元辰caveat跳过(引擎级·预期)
   const 调候 = climateNeed(chart.四柱, 旺衰.五行得分);
   const 涌现拓扑 = buildEmergentTopology(旺衰.五行得分, chart.日主.wuXing, 刑冲合害);
   const 用神 = analyzeFavor(chart.四柱, chart.日主, 旺衰, 刑冲合害, 涌现拓扑, 调候);
@@ -28,7 +30,7 @@ export function analyzeChart(chart: Chart): ChartAnalysis {
   const 从格信号 = buildCongSignal(旺衰, 涌现拓扑, chart.日主.wuXing);
   const 十神组合 = detectGodCombos(chart.四柱, chart.日主, 旺衰, 通根);
   const 矛盾张力 = buildTension(涌现拓扑, 十神组合, chart.日主.wuXing);
-  return { 通根, 旺衰, 刑冲合害, 调候, 涌现拓扑, 用神, 十神组合, 矛盾张力, 格局, 从格信号 };
+  return { 通根, 旺衰, 刑冲合害, 调候, 涌现拓扑, 用神, 十神组合, 矛盾张力, 格局, 从格信号, 神煞 };
 }
 
 /** L0 + L1-A：生辰 → 带结构事实分析的盘。 */
