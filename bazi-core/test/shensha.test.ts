@@ -121,3 +121,23 @@ describe('detectShensha · byMonthBranch', () => {
     expect(r.hits.find((h) => h.name === '天医')!.positions).toContain('日');
   });
 });
+
+describe('detectShensha · byPillar', () => {
+  function four魁罡庚辰(): FourPillars {
+    return {
+      年: buildPillar('甲', '甲', '子'),
+      月: buildPillar('丁', '丁', '卯'),
+      日: buildPillar('庚', '庚', '辰'),  // 庚辰=魁罡+金舆? 庚金舆戌;此处测魁罡
+      时: buildPillar('乙', '乙', '丑'),  // 乙丑=金神(时柱)
+    };
+  }
+  const DM_庚: DayMaster = { gan: '庚', wuXing: '金', yinYang: '阳' };
+  test('日柱庚辰=魁罡(位置日)', () => {
+    const r = detectShensha(four魁罡庚辰(), DM_庚);
+    expect(r.hits.find((h) => h.name === '魁罡')!.positions).toEqual(['日']);
+  });
+  test('时柱乙丑=金神(位置时)', () => {
+    const r = detectShensha(four魁罡庚辰(), DM_庚);
+    expect(r.hits.find((h) => h.name === '金神')!.positions).toContain('时');
+  });
+});

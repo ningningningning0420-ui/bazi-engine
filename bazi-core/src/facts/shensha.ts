@@ -137,7 +137,22 @@ function byMonthBranch(four: FourPillars): ShenshaHit[] {
   return hits;
 }
 
+function byPillar(four: FourPillars): ShenshaHit[] {
+  const hits: ShenshaHit[] = [];
+  // 魁罡/十恶大败/六秀日:仅日柱;阴差阳错/金神:日柱或时柱
+  const checkSet = (name: ShenshaName, set: Set<string>, slots: PillarSlot[]) => {
+    const pos = slots.filter((s) => { const p = four[s]; return p && set.has(p.gan + p.zhi); });
+    if (pos.length) hits.push(mk(name, '日柱', pos));
+  };
+  checkSet('魁罡', T.魁罡, ['日']);
+  checkSet('十恶大败', T.十恶大败, ['日']);
+  checkSet('六秀日', T.六秀日, ['日']);
+  checkSet('阴差阳错', T.阴差阳错, ['日', '时']);
+  checkSet('金神', T.金神, ['日', '时']);
+  return hits;
+}
+
 export function detectShensha(four: FourPillars, dm: DayMaster): ShenshaResult {
-  const hits = [...byStem(four, dm), ...byYearBranch(four), ...byMonthBranch(four)];
+  const hits = [...byStem(four, dm), ...byYearBranch(four), ...byMonthBranch(four), ...byPillar(four)];
   return { hits, caveats: [] };
 }
