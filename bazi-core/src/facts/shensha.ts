@@ -1,5 +1,6 @@
 import type { FourPillars, DayMaster, PillarSlot, ShenshaHit, ShenshaResult, ShenshaName, ShenshaCategory, ShenshaPolarity } from '../types';
 import type { Gan, Zhi } from '../constants/gan-zhi';
+import { GAN_YINYANG } from '../constants/gan-zhi';
 import * as T from '../constants/shensha-tables';
 
 const SLOTS: PillarSlot[] = ['年', '月', '日', '时'];
@@ -152,7 +153,33 @@ function byPillar(four: FourPillars): ShenshaHit[] {
   return hits;
 }
 
-export function detectShensha(four: FourPillars, dm: DayMaster): ShenshaResult {
-  const hits = [...byStem(four, dm), ...byYearBranch(four), ...byMonthBranch(four), ...byPillar(four)];
-  return { hits, caveats: [] };
+export interface DetectShenshaOpts {
+  gender?: '乾' | '坤';   // 元辰需要;不传则元辰跳过 + caveat
+}
+
+function specialYuanchen(four: FourPillars, opts: DetectShenshaOpts, caveats: string[]): ShenshaHit[] {
+  const yz = four.年?.zhi;
+  const yg = four.年?.gan;
+  if (!yz || !yg) return [];
+  if (!opts.gender) { caveats.push('元辰:缺性别,未计算'); return []; }
+  const yearYang = GAN_YINYANG[yg] === '阳';
+  // 阳男 或 阴女 → 用"阳男阴女"表;阴男 或 阳女 → "阴男阳女"表
+  const isMale = opts.gender === '乾';
+  const useYangNan = (isMale && yearYang) || (!isMale && !yearYang);
+  const target = useYangNan ? T.元辰_阳男阴女[yz] : T.元辰_阴男阳女[yz];
+  const pos = branchesAt(four, [target]);
+  return pos.length ? [mk('元辰', '年支性别', pos)] : [];
+}
+
+export function detectShensha(four: FourPillars, dm: DayMaster, opts: DetectShenshaOpts = {}): ShenshaResult {
+  const caveats: string[] = [];
+  if (!four.时) caveats.push('缺时柱:时柱相关神煞可能漏判');
+  const hits = [
+    ...byStem(four, dm),
+    ...byYearBranch(four),
+    ...byMonthBranch(four),
+    ...byPillar(four),
+    ...specialYuanchen(four, opts, caveats),
+  ];
+  return { hits, caveats };
 }

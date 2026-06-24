@@ -141,3 +141,24 @@ describe('detectShensha · byPillar', () => {
     expect(r.hits.find((h) => h.name === '金神')!.positions).toContain('时');
   });
 });
+
+describe('detectShensha · special 元辰', () => {
+  // 阳男·年支子 → 元辰未
+  function four年子(): FourPillars {
+    return {
+      年: buildPillar('甲', '甲', '子'),
+      月: buildPillar('丁', '丁', '未'),  // 未=阳男元辰
+      日: buildPillar('甲', '甲', '寅'),
+      时: buildPillar('甲', '甲', '亥'),
+    };
+  }
+  test('阳男年支子:元辰未(命中月)', () => {
+    const r = detectShensha(four年子(), DM_甲, { gender: '乾' });
+    expect(r.hits.find((h) => h.name === '元辰')!.positions).toContain('月');
+  });
+  test('不传性别:元辰不算 + caveat', () => {
+    const r = detectShensha(four年子(), DM_甲);
+    expect(r.hits.find((h) => h.name === '元辰')).toBeUndefined();
+    expect(r.caveats.some((c) => c.includes('元辰'))).toBe(true);
+  });
+});
