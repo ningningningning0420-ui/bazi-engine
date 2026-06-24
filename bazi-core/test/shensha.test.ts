@@ -248,3 +248,79 @@ describe('shensha-tables deferred 5 起例表自洽 + 必写死断言', () => {
     expect(天罗地网['木']).toBeUndefined();
   });
 });
+
+describe('detectShensha · 天德合 + byNayin(学堂/词馆/天罗地网)', () => {
+  const DM_丙: DayMaster = { gan: '丙', wuXing: '火', yinYang: '阳' };
+  // 天德合 干形态:月支寅→天德合=壬(干)
+  function four天德合干(): FourPillars {
+    return {
+      年: buildPillar('甲', '甲', '子'),
+      月: buildPillar('丁', '丁', '寅'),  // 月支寅 → 天德合=壬(干)
+      日: buildPillar('甲', '甲', '辰'),
+      时: buildPillar('壬', '壬', '申'),  // 壬干 → 命中天德合(时)
+    };
+  }
+  test('月支寅:天德合壬(命中时干)', () => {
+    const r = detectShensha(four天德合干(), DM_甲);
+    expect(r.hits.find((h) => h.name === '天德合')!.positions).toContain('时');
+  });
+  // 天德合 支形态:月支卯→天德合=巳(支)
+  function four天德合支(): FourPillars {
+    return {
+      年: buildPillar('甲', '甲', '子'),
+      月: buildPillar('丁', '丁', '卯'),  // 月支卯 → 天德合=巳(支)
+      日: buildPillar('甲', '甲', '巳'),  // 巳支 → 命中天德合(日)
+      时: buildPillar('甲', '甲', '戌'),
+    };
+  }
+  test('月支卯:天德合巳(命中日支)', () => {
+    const r = detectShensha(four天德合支(), DM_甲);
+    expect(r.hits.find((h) => h.name === '天德合')!.positions).toContain('日');
+  });
+  // 学堂/词馆:年甲子=海中金→金命;学堂巳/词馆申
+  function fourNayin金(): FourPillars {
+    return {
+      年: buildPillar('甲', '甲', '子'),  // 甲子=金命
+      月: buildPillar('丁', '丁', '巳'),  // 巳 → 学堂(金)
+      日: buildPillar('甲', '甲', '申'),  // 申 → 词馆(金)
+      时: buildPillar('甲', '甲', '戌'),  // 戌(金命无天罗地网)
+    };
+  }
+  test('年甲子(金命):学堂巳(月)·词馆申(日)', () => {
+    const r = detectShensha(fourNayin金(), DM_甲);
+    expect(r.hits.find((h) => h.name === '学堂')!.positions).toContain('月');
+    expect(r.hits.find((h) => h.name === '词馆')!.positions).toContain('日');
+  });
+  test('金命无天罗地网(纵有戌)', () => {
+    const r = detectShensha(fourNayin金(), DM_甲);
+    expect(r.hits.find((h) => h.name === '天罗' || h.name === '地网')).toBeUndefined();
+  });
+  // 天罗:年丙寅=炉中火→火命;见戌→天罗
+  function four天罗(): FourPillars {
+    return {
+      年: buildPillar('丙', '丙', '寅'),  // 丙寅=火命
+      月: buildPillar('丁', '丁', '戌'),  // 戌 → 天罗
+      日: buildPillar('甲', '甲', '子'),
+      时: buildPillar('甲', '甲', '卯'),
+    };
+  }
+  test('年丙寅(火命)见戌:天罗(月)·无地网', () => {
+    const r = detectShensha(four天罗(), DM_丙);
+    expect(r.hits.find((h) => h.name === '天罗')!.positions).toContain('月');
+    expect(r.hits.find((h) => h.name === '地网')).toBeUndefined();
+  });
+  // 地网:年丙子=涧下水→水命;见辰→地网
+  function four地网(): FourPillars {
+    return {
+      年: buildPillar('丙', '丙', '子'),  // 丙子=水命
+      月: buildPillar('丁', '丁', '辰'),  // 辰 → 地网
+      日: buildPillar('甲', '甲', '午'),
+      时: buildPillar('甲', '甲', '卯'),
+    };
+  }
+  test('年丙子(水命)见辰:地网(月)·无天罗', () => {
+    const r = detectShensha(four地网(), DM_丙);
+    expect(r.hits.find((h) => h.name === '地网')!.positions).toContain('月');
+    expect(r.hits.find((h) => h.name === '天罗')).toBeUndefined();
+  });
+});

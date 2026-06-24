@@ -135,6 +135,10 @@ function byMonthBranch(four: FourPillars): ShenshaHit[] {
   // 天医(地支)
   const tyPos = branchesAt(four, [T.天医MAP[mz]]);
   if (tyPos.length) hits.push(mk('天医', '月支', tyPos));
+  // 天德合(干 or 支·同天德双形态)
+  const tdh = T.天德合[mz];
+  if (tdh.干) { const pos = stemsAt(four, [tdh.干]); if (pos.length) hits.push(mk('天德合', '月支', pos)); }
+  if (tdh.支) { const pos = branchesAt(four, [tdh.支]); if (pos.length) hits.push(mk('天德合', '月支', pos)); }
   return hits;
 }
 
@@ -150,6 +154,28 @@ function byPillar(four: FourPillars): ShenshaHit[] {
   checkSet('六秀日', T.六秀日, ['日']);
   checkSet('阴差阳错', T.阴差阳错, ['日', '时']);
   checkSet('金神', T.金神, ['日', '时']);
+  return hits;
+}
+
+// ===== byNayin 组(年柱纳音年命:学堂/词馆/天罗/地网)=====
+function byNayin(four: FourPillars): ShenshaHit[] {
+  const yg = four.年?.gan;
+  const yz = four.年?.zhi;
+  if (!yg || !yz) return [];
+  const ny = T.NAYIN60[yg + yz];
+  if (!ny) return [];
+  const hits: ShenshaHit[] = [];
+  // 学堂(长生位)/词馆(临官位):年命纳音五行→目标地支·扫四柱地支(含年柱·正格即年柱自坐)
+  const xt = branchesAt(four, [T.学堂[ny]]);
+  if (xt.length) hits.push(mk('学堂', '纳音', xt));
+  const cg = branchesAt(four, [T.词馆[ny]]);
+  if (cg.length) hits.push(mk('词馆', '纳音', cg));
+  // 天罗地网:火→天罗{戌,亥}/水·土→地网{辰,巳}/金·木无
+  const tlw = T.天罗地网[ny];
+  if (tlw) {
+    const pos = branchesAt(four, tlw.支);
+    if (pos.length) hits.push(mk(tlw.煞, '纳音', pos));
+  }
   return hits;
 }
 
@@ -179,6 +205,7 @@ export function detectShensha(four: FourPillars, dm: DayMaster, opts: DetectShen
     ...byYearBranch(four),
     ...byMonthBranch(four),
     ...byPillar(four),
+    ...byNayin(four),
     ...specialYuanchen(four, opts, caveats),
   ];
   return { hits, caveats };
