@@ -8,6 +8,7 @@ import {
 import { detectShensha } from '../src/facts/shensha';
 import { buildPillar } from '../src/build-pillar';
 import { computeChartFacts } from '../src/analyze-chart';
+import { extractCitableStructures } from '../src/persona/structures';
 import { BirthInputSchema } from '../src/types';
 import type { FourPillars, DayMaster } from '../src/types';
 
@@ -171,5 +172,15 @@ describe('神煞装配进 ChartAnalysis', () => {
     const facts = computeChartFacts(birth);
     expect(facts.分析.神煞).toBeDefined();
     expect(Array.isArray(facts.分析.神煞.hits)).toBe(true);
+  });
+});
+
+describe('神煞进 cite 白名单', () => {
+  test('present 神煞名进 citable.all', () => {
+    const birth = BirthInputSchema.parse({ year: 1990, month: 5, day: 20, hour: 10, hourUnknown: false, gender: '乾' });
+    const facts = computeChartFacts(birth);
+    const cit = extractCitableStructures(facts);
+    const names = facts.分析.神煞.hits.map((h) => h.name);
+    if (names.length) expect(cit.all.some((s) => names.includes(s as any))).toBe(true);
   });
 });

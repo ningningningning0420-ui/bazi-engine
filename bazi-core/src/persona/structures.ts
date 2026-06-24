@@ -9,6 +9,7 @@ export function extractCitableStructures(facts: ChartFacts): CitableStructures {
   const 通关 = an.涌现拓扑.tongGuanReport.filter((n) => n.status === '调和中').map((n) => `${n.node}通关`);
   const 通关缺 = an.涌现拓扑.tongGuanReport.filter((n) => n.status === '缺位待补').map((n) => `${n.node}通关缺位`);
   const 格局 = [an.格局.格];
-  const all = [...new Set([...组合, ...张力轴, ...相战, ...通关, ...通关缺, ...格局])];
+  const 神煞 = an.神煞.hits.map((s) => s.name);
+  const all = [...new Set([...组合, ...张力轴, ...相战, ...通关, ...通关缺, ...格局, ...神煞])];
   return { all, 优缺同源点: [...new Set(an.矛盾张力.优缺同源点.map((p) => p.结构cite))], 张力轴 };
 }
