@@ -184,3 +184,18 @@ describe('神煞进 cite 白名单', () => {
     if (names.length) expect(cit.all.some((s) => names.includes(s as any))).toBe(true);
   });
 });
+
+describe('神煞 · 性质', () => {
+  test('present 天然稀疏:随机抽 30 个生辰,平均命中 < 神煞总数一半', () => {
+    let total = 0; const N = 30;
+    for (let i = 0; i < N; i++) {
+      const birth = BirthInputSchema.parse({ year: 1950 + i, month: (i % 12) + 1, day: (i % 27) + 1, hour: i % 24, hourUnknown: false, gender: i % 2 ? '乾' : '坤' });
+      total += computeChartFacts(birth).分析.神煞.hits.length;
+    }
+    expect(total / N).toBeLessThan(19);  // 38 个名目的一半;稀疏性 sanity
+  });
+  test('确定性:同生辰两次 computeChartFacts 的神煞深相等', () => {
+    const b = BirthInputSchema.parse({ year: 1985, month: 8, day: 8, hour: 8, hourUnknown: false, gender: '坤' });
+    expect(computeChartFacts(b).分析.神煞).toEqual(computeChartFacts(b).分析.神煞);
+  });
+});

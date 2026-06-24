@@ -68,3 +68,8 @@ export type {
   主导驱力, 对人基调, 命门, PersonaAnchors, CitableStructures,
   ValidationViolation, ValidationResult, ScripturePrompt,
 } from './types';
+
+// ===== 计划 7：本命神煞 =====
+export { detectShensha } from './facts/shensha';
+export type { DetectShenshaOpts } from './facts/shensha';
+export type { ShenshaName, ShenshaHit, ShenshaResult, ShenshaCategory, ShenshaPolarity, ShenshaBasis } from './types';
