@@ -4,6 +4,7 @@ import {
   三合局类, 劫灾亡, 红鸾, 天喜, 孤辰寡宿,
   天德, 月德, 月德合, 天医MAP,
   魁罡, 阴差阳错, 十恶大败, 金神, 六秀日,
+  天德合, NAYIN60, 学堂, 词馆, 天罗地网,
 } from '../src/constants/shensha-tables';
 import { detectShensha } from '../src/facts/shensha';
 import { buildPillar } from '../src/build-pillar';
@@ -197,5 +198,53 @@ describe('神煞 · 性质', () => {
   test('确定性:同生辰两次 computeChartFacts 的神煞深相等', () => {
     const b = BirthInputSchema.parse({ year: 1985, month: 8, day: 8, hour: 8, hourUnknown: false, gender: '坤' });
     expect(computeChartFacts(b).分析.神煞).toEqual(computeChartFacts(b).分析.神煞);
+  });
+});
+
+describe('shensha-tables deferred 5 起例表自洽 + 必写死断言', () => {
+  test('天德合 卯=巳(支)·子=申(支)·寅=壬(干)·丑=乙(干)', () => {
+    expect(天德合['卯'].支).toBe('巳');
+    expect(天德合['子'].支).toBe('申');
+    expect(天德合['寅'].干).toBe('壬');
+    expect(天德合['丑'].干).toBe('乙');
+  });
+  test('天德合 12 月齐·每月恰一个 干 xor 支', () => {
+    const keys = Object.keys(天德合);
+    expect(keys).toHaveLength(12);
+    for (const k of keys) {
+      const v = 天德合[k as keyof typeof 天德合];
+      expect(Boolean(v.干) !== Boolean(v.支)).toBe(true);
+    }
+  });
+  test('NAYIN60 60 项齐·每五行恰 12', () => {
+    expect(Object.keys(NAYIN60)).toHaveLength(60);
+    const cnt: Record<string, number> = {};
+    for (const v of Object.values(NAYIN60)) cnt[v] = (cnt[v] || 0) + 1;
+    expect(cnt['金']).toBe(12); expect(cnt['木']).toBe(12); expect(cnt['水']).toBe(12);
+    expect(cnt['火']).toBe(12); expect(cnt['土']).toBe(12);
+  });
+  test('NAYIN60 必写死:甲子金·戊戌木(非土)·丙寅火·庚午土·甲申水·壬申金·辛巳金', () => {
+    expect(NAYIN60['甲子']).toBe('金');
+    expect(NAYIN60['戊戌']).toBe('木');
+    expect(NAYIN60['丙寅']).toBe('火');
+    expect(NAYIN60['庚午']).toBe('土');
+    expect(NAYIN60['甲申']).toBe('水');
+    expect(NAYIN60['壬申']).toBe('金');
+    expect(NAYIN60['辛巳']).toBe('金');
+  });
+  test('学堂 金巳木亥水申火寅·土申(水土同宫·拍板A)', () => {
+    expect(学堂['金']).toBe('巳'); expect(学堂['木']).toBe('亥'); expect(学堂['水']).toBe('申');
+    expect(学堂['火']).toBe('寅'); expect(学堂['土']).toBe('申');
+  });
+  test('词馆 金申木寅水亥火巳·土亥(水土同宫·拍板A)', () => {
+    expect(词馆['金']).toBe('申'); expect(词馆['木']).toBe('寅'); expect(词馆['水']).toBe('亥');
+    expect(词馆['火']).toBe('巳'); expect(词馆['土']).toBe('亥');
+  });
+  test('天罗地网 火=天罗{戌,亥}·水/土=地网{辰,巳}·金木无', () => {
+    expect(天罗地网['火']).toEqual({ 煞: '天罗', 支: ['戌', '亥'] });
+    expect(天罗地网['水']).toEqual({ 煞: '地网', 支: ['辰', '巳'] });
+    expect(天罗地网['土']).toEqual({ 煞: '地网', 支: ['辰', '巳'] });
+    expect(天罗地网['金']).toBeUndefined();
+    expect(天罗地网['木']).toBeUndefined();
   });
 });
