@@ -103,3 +103,21 @@ describe('detectShensha · byYearBranch', () => {
     expect(r.hits.find((h) => h.name === '亡神')).toBeUndefined();
   });
 });
+
+describe('detectShensha · byMonthBranch', () => {
+  // 月支 寅:天德=丁(干)·月德=丙(干)·天医=丑(支·寅退一位)
+  function four月寅(): FourPillars {
+    return {
+      年: buildPillar('甲', '甲', '子'),
+      月: buildPillar('丁', '丁', '寅'),  // 天德丁(此柱天干丁→命中)
+      日: buildPillar('甲', '甲', '丑'),  // 天医丑
+      时: buildPillar('丙', '丙', '辰'),  // 月德丙(此柱天干丙→命中)
+    };
+  }
+  test('月支寅:天德丁(命中月干)·月德丙(命中时干)·天医丑(命中日支)', () => {
+    const r = detectShensha(four月寅(), DM_甲);
+    expect(r.hits.find((h) => h.name === '天德贵人')!.positions).toContain('月');
+    expect(r.hits.find((h) => h.name === '月德贵人')!.positions).toContain('时');
+    expect(r.hits.find((h) => h.name === '天医')!.positions).toContain('日');
+  });
+});

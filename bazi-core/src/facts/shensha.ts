@@ -117,7 +117,27 @@ function byYearBranch(four: FourPillars): ShenshaHit[] {
   return hits;
 }
 
+function byMonthBranch(four: FourPillars): ShenshaHit[] {
+  const mz = four.月?.zhi;
+  if (!mz) return [];
+  const hits: ShenshaHit[] = [];
+  // 天德:干 or 支
+  const td = T.天德[mz];
+  if (td.干) { const pos = stemsAt(four, [td.干]); if (pos.length) hits.push(mk('天德贵人', '月支', pos)); }
+  if (td.支) { const pos = branchesAt(four, [td.支]); if (pos.length) hits.push(mk('天德贵人', '月支', pos)); }
+  // 月德(天干)
+  const ydPos = stemsAt(four, [T.月德[mz]]);
+  if (ydPos.length) hits.push(mk('月德贵人', '月支', ydPos));
+  // 月德合(天干)
+  const ydhPos = stemsAt(four, [T.月德合[mz]]);
+  if (ydhPos.length) hits.push(mk('月德合', '月支', ydhPos));
+  // 天医(地支)
+  const tyPos = branchesAt(four, [T.天医MAP[mz]]);
+  if (tyPos.length) hits.push(mk('天医', '月支', tyPos));
+  return hits;
+}
+
 export function detectShensha(four: FourPillars, dm: DayMaster): ShenshaResult {
-  const hits = [...byStem(four, dm), ...byYearBranch(four)];
+  const hits = [...byStem(four, dm), ...byYearBranch(four), ...byMonthBranch(four)];
   return { hits, caveats: [] };
 }
