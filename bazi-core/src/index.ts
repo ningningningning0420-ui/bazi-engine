@@ -73,3 +73,7 @@ export type {
 export { detectShensha } from './facts/shensha';
 export type { DetectShenshaOpts } from './facts/shensha';
 export type { ShenshaName, ShenshaHit, ShenshaResult, ShenshaCategory, ShenshaPolarity, ShenshaBasis } from './types';
+
+// ===== 计划 8：seedToBirth（种子 → 合法生辰·均匀无偏·守 L0 红线）=====
+export { seedToBirth } from './seed-to-birth';
+export type { SeedToBirthOpts } from './seed-to-birth';
