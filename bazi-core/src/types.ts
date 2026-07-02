@@ -45,7 +45,9 @@ export interface Chart {
   十神类别: Record<TenGodCategory, number>;
   conventions: {
     换年: '立春';
-    子时换日: true;
+    // 实际行为 = lunar-typescript EightChar 默认 sect=2（分早晚子时）：
+    // 23:00–23:59 日柱算当天、时柱按次日日干起。曾误标 `子时换日: true`（2026-07-01 review 纠正）。
+    子时换日: '晚子时不换日(日柱当天·时干次日)';
     时辰口径: '钟表时';
     历法库: 'lunar-typescript';
   };

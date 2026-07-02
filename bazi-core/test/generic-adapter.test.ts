@@ -49,6 +49,27 @@ describe('generic-adapter', () => {
     const llm: LlmInvokePort = { writeScripture: async () => ({ anchors: { 主导驱力: '乱填' }, scriptureText: 'x' }) };
     await expect(ensurePersona('npc2', BI, { persistence, llm })).rejects.toThrow();
   });
+  test('ensurePersona：writeScripture 抛一次(传输失败)后恢复 → 消耗 attempt 并成功', async () => {
+    const persistence = memPersist();
+    let calls = 0;
+    const llm: LlmInvokePort = {
+      writeScripture: async () => {
+        calls++;
+        if (calls === 1) throw new Error('网络超时');
+        return { anchors: goodAnchors(), scriptureText: '圣经全文…' };
+      },
+    };
+    const npc = await ensurePersona('npcT1', BI, { persistence, llm });
+    expect(npc.personaAnchors.主导驱力).toBe('求成就');
+    expect(calls).toBe(2);
+  });
+  test('ensurePersona：writeScripture 持续抛 → 消耗全部 attempt 后以耗尽错误 reject', async () => {
+    const persistence = memPersist();
+    let calls = 0;
+    const llm: LlmInvokePort = { writeScripture: async () => { calls++; throw new Error('网络超时'); } };
+    await expect(ensurePersona('npcT2', BI, { persistence, llm })).rejects.toThrow(/耗尽/);
+    expect(calls).toBe(4); // MAX_RETRY=3 → 共 4 次 attempt
+  });
   test('★buildRuntimeContext 命理-free(禁词) + 含护栏', () => {
     const tend = { 隐藏暗示: '近期在事业上较有起色' } as Pick<Tendency, '隐藏暗示'>;
     const ctx = buildRuntimeContext(goodAnchors(), tend);

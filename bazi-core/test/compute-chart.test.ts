@@ -53,3 +53,17 @@ describe('computeChart L0', () => {
     expect(sum).toBe(3 + hiddenCount);
   });
 });
+
+describe('conventions 口径诚实性（2026-07-01 review·P1）', () => {
+  test('晚子时(23:xx)实际行为：日柱不换(当天)·时柱按次日干起（lunar sect=2）', () => {
+    const late: BirthInput = { year: 2000, month: 1, day: 1, hour: 23, hourUnknown: false, gender: '乾' };
+    const c = computeChart(late);
+    expect(c.四柱.日.gan + c.四柱.日.zhi).toBe('戊午'); // 当天日柱·未换日
+    expect(c.四柱.时!.gan + c.四柱.时!.zhi).toBe('甲子'); // 时干按次日己日五鼠遁
+  });
+
+  test('conventions 标签如实描述晚子时口径（标签≠行为是 P1 红线）', () => {
+    const c = computeChart(SAMPLE);
+    expect(c.conventions.子时换日).toBe('晚子时不换日(日柱当天·时干次日)');
+  });
+});

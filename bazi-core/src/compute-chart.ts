@@ -45,7 +45,7 @@ export function computeChart(input: BirthInput): Chart {
     四柱: { 年, 月, 日, 时 },
     十神计数: counts,
     十神类别: cats,
-    conventions: { 换年: '立春', 子时换日: true, 时辰口径: '钟表时', 历法库: 'lunar-typescript' },
+    conventions: { 换年: '立春', 子时换日: '晚子时不换日(日柱当天·时干次日)', 时辰口径: '钟表时', 历法库: 'lunar-typescript' },
     caveats,
   };
 }

@@ -4,7 +4,7 @@ import { computeChart, type BirthInput } from '../src/index';
 const FIXTURES: BirthInput[] = [
   { year: 1984, month: 2, day: 4, hour: 0, hourUnknown: false, gender: '乾' },   // 立春换年边界附近
   { year: 1990, month: 8, day: 8, hour: 14, hourUnknown: false, gender: '坤' },
-  { year: 2008, month: 12, day: 31, hour: 23, hourUnknown: false, gender: '乾' }, // 子时换日边界
+  { year: 2008, month: 12, day: 31, hour: 23, hourUnknown: false, gender: '乾' }, // 晚子时边界（日柱不换·时干次日）
 ];
 
 describe('黄金样例：可复现快照', () => {

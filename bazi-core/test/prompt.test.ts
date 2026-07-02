@@ -19,6 +19,16 @@ describe('buildScripturePrompt', () => {
     expect(p.一盘多解).toMatch(/多解|不锁/);
     expect(p.cite要求).toMatch(/白名单/);
   });
+  test('命局结构渲染神煞段（白名单可 cite 的神煞必须带料：名+极性+落柱+gist）', () => {
+    const p = buildScripturePrompt(facts);
+    const hits = facts.分析.神煞.hits;
+    expect(hits.length).toBeGreaterThan(0); // 前提：此盘确有神煞（几乎所有盘都有）
+    expect(p.命局结构).toContain('神煞：');
+    const h = hits[0]!;
+    expect(p.命局结构).toContain(h.name);
+    expect(p.命局结构).toContain(h.gist);
+    expect(p.命局结构).toContain(h.positions.join(''));
+  });
   test('priorViolations 透传(retry 用) + 确定性', () => {
     const p = buildScripturePrompt(facts, ['cite了不存在的结构X']);
     expect(p.priorViolations).toEqual(['cite了不存在的结构X']);

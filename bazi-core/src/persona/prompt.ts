@@ -16,7 +16,8 @@ export function buildScripturePrompt(facts: ChartFacts, priorViolations: string[
   const 旺衰 = `旺衰：${an.旺衰.身强弱}${an.旺衰.borderline ? '(borderline)' : ''}·月令${an.旺衰.月令旺衰}`;
   const 调候 = `调候：${an.调候.寒暖标签}/${an.调候.燥湿标签}·级别${an.调候.级别 ?? '无'}`;
   const 格局 = `格局：${an.格局.格}（${an.格局.立格依据}）`;
-  const 命局结构 = [用神, 组合, 张力, 拓扑, 旺衰, 调候, 格局].join('\n');
+  const 神煞 = `神煞：${an.神煞.hits.map((h) => `${h.name}(${h.polarity}·落${h.positions.join('')}柱·${h.gist})`).join('；') || '（无）'}`;
+  const 命局结构 = [用神, 组合, 张力, 拓扑, 旺衰, 调候, 格局, 神煞].join('\n');
 
   const 写作任务 =
     '把这堆关系性结论"断成一个人"：性格地基/动机/说话方式/关系模式/弱点/成长弧/阿喀琉斯之踵。一次性写定存档。';

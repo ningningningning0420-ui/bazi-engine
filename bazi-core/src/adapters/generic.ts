@@ -31,9 +31,17 @@ export async function ensurePersona(npcId: string, birthInput: BirthInput, ports
   }
   const facts = computeChartFacts(birthInput);
   let priorViolations: string[] = [];
+  let lastTransportError: string | null = null;
   for (let attempt = 0; attempt <= MAX_RETRY; attempt++) {
     const prompt = buildScripturePrompt(facts, priorViolations);
-    const r = await ports.llm.writeScripture(prompt);
+    let r: Awaited<ReturnType<LlmInvokePort['writeScripture']>>;
+    try {
+      r = await ports.llm.writeScripture(prompt);
+    } catch (e) {
+      // 传输层失败（网络/超时/宿主异常）也消耗一次 attempt；priorViolations 不掺入（非 LLM 违规，重试同一 prompt）
+      lastTransportError = e instanceof Error ? e.message : String(e);
+      continue;
+    }
     const parsed = PersonaAnchorsSchema.safeParse(r.anchors);
     if (!parsed.success) {
       priorViolations = parsed.error.issues.map((e) => `字段 ${e.path.join('.')}: ${e.message}`);
@@ -48,7 +56,10 @@ export async function ensurePersona(npcId: string, birthInput: BirthInput, ports
     }
     priorViolations = v.violations.map((x) => x.reason); // 只述客观缺失·不投喂答案
   }
-  throw new Error(`npcId「${npcId}」圣经校验 retry(${MAX_RETRY}) 耗尽`);
+  throw new Error(
+    `npcId「${npcId}」圣经 retry(${MAX_RETRY}) 耗尽` +
+    (lastTransportError ? `（末次 llm 调用失败: ${lastTransportError}）` : '（校验未过）'),
+  );
 }
 
 /** ★台前寄存器注入：命理-free 行为画像 + tendency 隐藏暗示 + 护栏（供宿主注入实时上下文）。 */
